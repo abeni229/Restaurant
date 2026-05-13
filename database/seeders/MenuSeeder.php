@@ -12,6 +12,9 @@ class MenuSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        \App\Models\Categorie::create(['nom' => 'Entrées']);
+        \App\Models\Categorie::create(['nom' => 'Plats principaux']);
+        \App\Models\Categorie::create(['nom' => 'Desserts']);
+        \App\Models\Categorie::create(['nom' => 'Boissons']);
     }
 }

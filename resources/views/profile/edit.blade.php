@@ -1,29 +1,43 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Profile') }}
-        </h2>
-    </x-slot>
+@extends('layouts.app')
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
+@section('title', 'Mon profil')
+
+@section('content')
+<div class="page-hero">
+    <div class="container">
+        <div class="page-hero-label">Mon compte</div>
+        <h1>Modifier mon profil</h1>
+    </div>
+</div>
+
+<div class="section">
+    <div class="container">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Informations du profil -->
+            <div class="card">
+                <h3>Informations personnelles</h3>
+                <div class="mt-4">
                     @include('profile.partials.update-profile-information-form')
                 </div>
             </div>
 
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
+            <!-- Mot de passe -->
+            <div class="card">
+                <h3>Changer le mot de passe</h3>
+                <div class="mt-4">
                     @include('profile.partials.update-password-form')
                 </div>
             </div>
+        </div>
 
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.delete-user-form')
-                </div>
+        <!-- Suppression du compte -->
+        <div class="card mt-6">
+            <h3 class="text-red-600">Zone dangereuse</h3>
+            <p class="text-muted mt-2">Une fois votre compte supprimé, toutes vos données seront définitivement perdues.</p>
+            <div class="mt-4">
+                @include('profile.partials.delete-user-form')
             </div>
         </div>
     </div>
-</x-app-layout>
+</div>
+@endsection

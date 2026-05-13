@@ -477,6 +477,118 @@
 
         .card:hover { border-color: rgba(201,168,76,0.3); }
 
+        .admin-grid-2 {
+            display: grid;
+            gap: 2rem;
+        }
+
+        @media (min-width: 980px) {
+            .admin-grid-2 { grid-template-columns: 1.7fr 1fr; }
+            .card-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        }
+
+        .card-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .card-plat {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            min-height: 100%;
+        }
+
+        .card-plat img {
+            width: 100%;
+            height: 240px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .card-plat-content {
+            padding: 1.5rem 0 0;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            flex: 1;
+        }
+
+        .form-section { display: grid; gap: 1.5rem; }
+
+        .form-row {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 720px) {
+            .form-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+
+        .form-actions { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; }
+
+        .table-admin {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 0.75rem;
+        }
+
+        .table-admin th {
+            text-align: left;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            color: var(--gold);
+            padding: 0.85rem 1rem;
+            font-weight: 500;
+        }
+
+        .table-admin td {
+            background: rgba(255,255,255,0.04);
+            color: var(--cream);
+            padding: 1rem;
+            vertical-align: middle;
+        }
+
+        .table-admin tbody tr { border-radius: 1rem; overflow: hidden; }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.45rem 0.8rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+        }
+
+        .status-pending { background: rgba(249,211,0,0.14); color: var(--gold); }
+        .status-confirmed { background: rgba(26,136,82,0.16); color: #9bdeae; }
+        .status-cancelled { background: rgba(181,83,60,0.16); color: #f0b2a8; }
+
+        .admin-card-title {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+
+        .admin-card-title h1,
+        .admin-card-title h2 {
+            font-family: var(--font-display);
+            margin: 0;
+        }
+
+        .admin-card-title p {
+            color: rgba(249,245,236,0.65);
+            max-width: 720px;
+            line-height: 1.75;
+        }
+
         /* ══════════════════════
            ALERTES / FLASH
         ══════════════════════ */
@@ -752,23 +864,65 @@
                 </a>
             </li>
             <li>
-                <a href="{{ route('carte') }}"
-                   class="{{ request()->routeIs('carte') ? 'active' : '' }}">
+                <a href="{{ route('menu.index') }}"
+                   class="{{ request()->routeIs('menu.*') ? 'active' : '' }}">
                     La Carte
                 </a>
             </li>
             <li>
-                <a href="{{ route('menus.index') }}"
-                   class="{{ request()->routeIs('menus.*') ? 'active' : '' }}">
+                <a href="{{ route('menu.index') }}"
+                   class="{{ request()->routeIs('menu.*') ? 'active' : '' }}">
                     Menus
                 </a>
             </li>
+            @guest
             <li>
                 <a href="{{ route('reservations.create') }}"
                    class="nav-cta {{ request()->routeIs('reservations.*') ? 'active' : '' }}">
                     Réserver
                 </a>
             </li>
+            @endguest
+            @auth
+                @if(!auth()->user()->isAdmin())
+                    <li>
+                        <a href="{{ route('reservations.create') }}"
+                           class="nav-cta {{ request()->routeIs('reservations.*') ? 'active' : '' }}">
+                            Réserver
+                        </a>
+                    </li>
+                @endif
+                @if(auth()->user()->isAdmin())
+                    <li>
+                        <a href="{{ route('admin.reservations') }}"
+                           class="{{ request()->routeIs('admin.*') ? 'active' : '' }}">
+                            Tableau admin
+                        </a>
+                    </li>
+                @endif
+            <li>
+                <a href="{{ route('dashboard') }}"
+                   class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                    Mon compte
+                </a>
+            </li>
+            <li>
+                <form method="POST" action="{{ route('logout') }}" class="inline">
+                    @csrf
+                    <button type="submit" class="nav-link">
+                        Déconnexion
+                    </button>
+                </form>
+            </li>
+            @endauth
+            @guest
+            <li>
+                <a href="{{ route('login') }}"
+                   class="{{ request()->routeIs('login') ? 'active' : '' }}">
+                    Connexion
+                </a>
+            </li>
+            @endguest
         </ul>
     </nav>
 
@@ -839,8 +993,8 @@
                 <ul>
                     <li><a href="{{ route('home') }}">Accueil</a></li>
                     <li><a href="{{ route('home') }}#histoire">Notre histoire</a></li>
-                    <li><a href="{{ route('carte') }}">La carte</a></li>
-                    <li><a href="{{ route('menus.index') }}">Nos menus</a></li>
+                    <li><a href="{{ route('menu.index') }}">La carte</a></li>
+                    <li><a href="{{ route('menu.index') }}">Nos menus</a></li>
                 </ul>
             </div>
 

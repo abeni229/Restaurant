@@ -675,7 +675,7 @@
         }
 
         /* FORMULAIRE */
-        .reservation-form { display: flex; flex-direction: column; gap: 1.2rem; }
+        .reservation-form { display: flex; flex-direction: column; gap: 1.2rem; margin-top: 65px; }
 
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 
@@ -1024,6 +1024,12 @@
                         <path d="M4 10h12M12 6l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
                     </svg>
                 </a>
+                @guest
+                    <a href="{{ route('login') }}" class="btn-primary">Connexion</a>
+                    <a href="{{ route('register') }}" class="btn-ghost">Inscription</a>
+                @else
+                    <a href="{{ route('dashboard') }}" class="btn-ghost">Mon compte</a>
+                @endguest
             </div>
         </div>
 
@@ -1182,7 +1188,7 @@
                     </div>
                     <div class="contact-info">
                         <strong>Téléphone</strong>
-                        <span>+229 21 30 XX XX</span>
+                        <span>+229 01 29 30 00 00</span>
                     </div>
                 </div>
 
@@ -1218,84 +1224,99 @@
             </div>
 
             <div>
-                <form class="reservation-form" method="POST" action="{{ route('reservations.store') }}">
-                    @csrf
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label">Prénom</label>
-                            <input type="text" class="form-input" placeholder="Jean" name="prenom" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Nom</label>
-                            <input type="text" class="form-input" placeholder="Adansi" name="nom" required>
-                        </div>
+                @if(auth()->check() && auth()->user()->isAdmin())
+                    <div class="card">
+                        <p class="text-muted">Les administrateurs ne peuvent pas créer de réservations depuis cette page.</p>
                     </div>
+                @else
+                    <form class="reservation-form" method="POST" action="{{ route('reservations.store') }}">
+                        @csrf
+                        <input type="hidden" name="type" value="table">
 
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label">Téléphone</label>
-                            <input type="tel" class="form-input" placeholder="+229 97 ..." name="telephone">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Prénom</label>
+                                <input type="text" class="form-input" placeholder="Jean" name="prenom" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Nom</label>
+                                <input type="text" class="form-input" placeholder="Adansi" name="nom" required>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label class="form-label">E-mail</label>
-                            <input type="email" class="form-input" placeholder="jean@email.com" name="email">
-                        </div>
-                    </div>
 
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label">Date</label>
-                            <input type="date" class="form-input" name="date" required>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Téléphone</label>
+                                <input type="tel" class="form-input" placeholder="+229 97 ..." name="telephone">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">E-mail</label>
+                                <input type="email" class="form-input" placeholder="jean@email.com" name="email">
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label class="form-label">Heure</label>
-                            <select class="form-input" name="heure" required>
-                                <option value="">Choisir...</option>
-                                <optgroup label="Déjeuner">
-                                    <option>12h00</option><option>12h30</option>
-                                    <option>13h00</option><option>13h30</option>
-                                </optgroup>
-                                <optgroup label="Dîner">
-                                    <option>19h00</option><option>19h30</option>
-                                    <option>20h00</option><option>20h30</option><option>21h00</option>
-                                </optgroup>
-                            </select>
-                        </div>
-                    </div>
 
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label">Nombre de couverts</label>
-                            <select class="form-input" name="couverts" required>
-                                <option value="">Choisir...</option>
-                                @for ($i = 1; $i <= 12; $i++)
-                                    <option value="{{ $i }}">{{ $i }} {{ $i === 1 ? 'personne' : 'personnes' }}</option>
-                                @endfor
-                                <option value="13+">Plus de 12 (groupe)</option>
-                            </select>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Date</label>
+                                <input type="date" class="form-input" name="date" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Heure</label>
+                                <select class="form-input" name="heure" required>
+                                    <option value="">Choisir...</option>
+                                    <optgroup label="Déjeuner">
+                                        <option>12h00</option><option>12h30</option>
+                                        <option>13h00</option><option>13h30</option>
+                                    </optgroup>
+                                    <optgroup label="Dîner">
+                                        <option>19h00</option><option>19h30</option>
+                                        <option>20h00</option><option>20h30</option><option>21h00</option>
+                                    </optgroup>
+                                </select>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label class="form-label">Occasion</label>
-                            <select class="form-input" name="occasion">
-                                <option value="">Aucune</option>
-                                <option>Anniversaire</option>
-                                <option>Repas d'affaires</option>
-                                <option>Romantique</option>
-                                <option>Famille</option>
-                                <option>Autre</option>
-                            </select>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Nombre de couverts</label>
+                                <select class="form-input" name="couverts" required>
+                                    <option value="">Choisir...</option>
+                                    @for ($i = 1; $i <= 12; $i++)
+                                        <option value="{{ $i }}">{{ $i }} {{ $i === 1 ? 'personne' : 'personnes' }}</option>
+                                    @endfor
+                                    <option value="13+">Plus de 12 (groupe)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Occasion</label>
+                                <select class="form-input" name="occasion">
+                                    <option value="">Aucune</option>
+                                    <option>Anniversaire</option>
+                                    <option>Repas d'affaires</option>
+                                    <option>Romantique</option>
+                                    <option>Famille</option>
+                                    <option>Autre</option>
+                                </select>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="form-group">
-                        <label class="form-label">Demandes particulières</label>
-                        <textarea class="form-input" rows="3" name="notes"
-                            placeholder="Allergies, préférences, aménagement spécial..."
-                            style="resize:none; line-height:1.6"></textarea>
-                    </div>
+                        <div class="form-group">
+                            <label class="form-label">Demandes particulières</label>
+                            <textarea class="form-input" rows="3" name="notes"
+                                placeholder="Allergies, préférences, aménagement spécial..."
+                                style="resize:none; line-height:1.6"></textarea>
+                        </div>
 
-                    <button type="submit" class="form-submit">Confirmer la réservation</button>
-                </form>
+                        <button type="submit" class="form-submit">Confirmer la réservation</button>
+                    </form>
+
+                    @guest
+                        <div class="card" style="margin-top: 1.5rem;">
+                            <p class="text-muted">Vous devrez vous connecter pour finaliser la réservation.</p>
+                            <a href="{{ route('login') }}" class="btn-dark"></a>
+                        </div>
+                    @endguest
+                @endif
             </div>
         </div>
     </section>
@@ -1423,10 +1444,10 @@
             <div class="footer-col">
                 <h4>Menus</h4>
                 <ul>
-                    <li><a href="#">Menu déjeuner</a></li>
-                    <li><a href="#">Menu dîner</a></li>
-                    <li><a href="#">Menu dégustation</a></li>
-                    <li><a href="#">Événements privés</a></li>
+                    <li><a href="{{ route('menu.categorie', 'Entrées') }}">Entrées</a></li>
+                    <li><a href="{{ route('menu.categorie', 'Plats principaux') }}">Plats principaux</a></li>
+                    <li><a href="{{ route('menu.categorie', 'Desserts') }}">Desserts</a></li>
+                    <li><a href="{{ route('menu.categorie', 'Boissons') }}">Boissons</a></li>
                 </ul>
             </div>
 
